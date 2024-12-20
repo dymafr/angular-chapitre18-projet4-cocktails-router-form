@@ -13,6 +13,11 @@ export const routes: Routes = [
       (await import('./views/cart/cart.component')).CartComponent,
   },
   {
+    path: 'admin',
+    loadChildren: async () =>
+      (await import('./views/admin/admin.routes')).routes,
+  },
+  {
     path: '',
     pathMatch: 'full',
     redirectTo: 'cocktails',

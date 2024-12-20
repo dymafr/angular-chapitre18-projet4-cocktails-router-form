@@ -42,6 +42,10 @@ export class HeaderMenuComponent {
   show = signal(false);
   navigations = [
     {
+      path: '/admin',
+      name: 'Admin',
+    },
+    {
       path: '/cocktails',
       name: 'Cocktails',
     },
