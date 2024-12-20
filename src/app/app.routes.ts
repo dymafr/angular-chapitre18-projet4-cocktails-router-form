@@ -8,6 +8,11 @@ export const routes: Routes = [
     component: CocktailsComponent,
   },
   {
+    path: 'cart',
+    loadComponent: async () =>
+      (await import('./views/cart/cart.component')).CartComponent,
+  },
+  {
     path: '',
     pathMatch: 'full',
     redirectTo: 'cocktails',
