@@ -14,7 +14,9 @@ export const routes: Routes = [
       },
       {
         path: 'cocktails',
-        component: AdminCocktailsComponent,
+        loadChildren: async () =>
+          (await import('./views/admin-cocktails/admin-cocktails.routes'))
+            .routes,
       },
       {
         path: '',

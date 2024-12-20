@@ -11,6 +11,11 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
     <a class="my-2" routerLink="users" routerLinkActive="active-link">Users</a>
   </ul>`,
   host: { class: 'card flex flex-col p-12' },
-  styles: `:host { width: 200px; }`,
+  styles: `:host { 
+    width: 200px; 
+    @media screen and (max-width: 820px) {
+      width: 100%; 
+    } 
+  }`,
 })
 export class AdminNavbarComponent {}
