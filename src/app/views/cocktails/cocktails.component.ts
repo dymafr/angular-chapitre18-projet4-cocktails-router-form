@@ -20,6 +20,7 @@ import { CartService } from 'app/shared/services/cart.service';
     <app-cocktail-details
       (likecocktail)="likeCocktail($event)"
       (unlikecocktail)="unlikeCocktail($event)"
+      (addIngredients)="addIngredients($event)"
       [cocktail]="sc"
       [isLiked]="selectedCocktailLiked()"
       class="w-half xs-w-full card"
@@ -39,8 +40,8 @@ import { CartService } from 'app/shared/services/cart.service';
   `,
 })
 export class CocktailsComponent {
-  cocktailsService = inject(CocktailsService);
-  cartService = inject(CartService);
+  private cocktailsService = inject(CocktailsService);
+  private cartService = inject(CartService);
 
   cocktails = computed(
     () => this.cocktailsService.cocktailsResource.value() || []
@@ -63,5 +64,8 @@ export class CocktailsComponent {
   }
   unlikeCocktail(cocktailId: string) {
     this.cartService.unlikeCocktail(cocktailId);
+  }
+  addIngredients(ingredients: string[]) {
+    this.cartService.addIngredients(ingredients);
   }
 }

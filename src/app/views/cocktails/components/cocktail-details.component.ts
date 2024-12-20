@@ -17,7 +17,12 @@ import { Cocktail } from 'app/shared/interfaces';
       }
     </ul>
     <div class="flex">
-      <button class="btn btn-primary">Ajouter cocktail</button>
+      <button
+        (click)="addIngredients.emit(c.ingredients)"
+        class="btn btn-primary"
+      >
+        Ajouter le cocktail au panier
+      </button>
       <span class="flex-auto"></span>
       @if (isLiked()) {
       <button class="btn btn-primary" (click)="unlikecocktail.emit(c._id)">
@@ -54,4 +59,5 @@ export class CocktailDetailsComponent {
   isLiked = input.required<boolean>();
   likecocktail = output<string>();
   unlikecocktail = output<string>();
+  addIngredients = output<string[]>();
 }
