@@ -1,4 +1,12 @@
-import { Component, inject, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import {
   FormArray,
   FormBuilder,
@@ -6,14 +14,19 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { CocktailForm } from 'app/shared/interfaces';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Cocktail, CocktailForm } from 'app/shared/interfaces';
 import { CocktailsService } from 'app/shared/services/cocktails.service';
 
 @Component({
   selector: 'app-admin-cocktails-form',
   imports: [ReactiveFormsModule],
   template: `
+    @if (this.cocktailId) {
+    <h3 class="mb-20">Modification d'un cocktail</h3>
+    } @else {
     <h3 class="mb-20">Création d'un cocktail</h3>
+    }
     <form [formGroup]="cocktailForm" (submit)="submit()">
       <div class="flex flex-col gap-12 mb-10">
         <label for="name">Nom du cocktail</label>
@@ -73,7 +86,10 @@ import { CocktailsService } from 'app/shared/services/cocktails.service';
 export class AdminCocktailsFormComponent {
   private fb = inject(FormBuilder);
   private cocktailService = inject(CocktailsService);
-
+  private activatedRoute = inject(ActivatedRoute);
+  private router = inject(Router);
+  cocktails = computed(() => this.cocktailService.cocktailsResource.value());
+  cocktailId = toSignal(this.activatedRoute.params)()!['cocktailId'];
   isLoading = signal(false);
 
   cocktailForm = this.fb.group({
@@ -81,6 +97,28 @@ export class AdminCocktailsFormComponent {
     imageUrl: [''],
     description: [''],
     ingredients: this.fb.array([]),
+  });
+
+  initCocktailFormEffect = effect(() => {
+    if (this.cocktailId) {
+      const cocktails = this.cocktails();
+      if (cocktails) {
+        const { name, imageUrl, description, ingredients } = cocktails.find(
+          ({ _id }) => this.cocktailId === _id
+        )!;
+        this.cocktailForm.patchValue({
+          name,
+          imageUrl,
+          description,
+        });
+        ingredients.forEach((i) =>
+          this.ingredientsControl.push(this.fb.control(i))
+        );
+        this.initCocktailFormEffect.destroy();
+      }
+    } else {
+      this.initCocktailFormEffect.destroy();
+    }
   });
 
   get ingredientsControl() {
@@ -102,9 +140,17 @@ export class AdminCocktailsFormComponent {
   async submit() {
     this.isLoading.set(true);
     try {
-      await this.cocktailService.createCocktail(
-        this.cocktailForm.getRawValue() as CocktailForm
-      );
+      if (this.cocktailId) {
+        await this.cocktailService.editCocktail({
+          ...this.cocktailForm.getRawValue(),
+          _id: this.cocktailId,
+        } as Cocktail);
+      } else {
+        await this.cocktailService.createCocktail(
+          this.cocktailForm.getRawValue() as CocktailForm
+        );
+      }
+      this.router.navigateByUrl('/admin/cocktails/list');
     } catch (e) {
     } finally {
       this.isLoading.set(false);

@@ -33,4 +33,21 @@ export class CocktailsService {
       throw new Error(body);
     }
   }
+
+  async editCocktail(cocktail: Cocktail) {
+    const { _id, ...restCocktail } = cocktail;
+    const response = await fetch(`${BASE_URL}/${_id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(restCocktail),
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+    const body = await response.json();
+    if (response.ok) {
+      this.cocktailsResource.reload();
+    } else {
+      throw new Error(body);
+    }
+  }
 }
