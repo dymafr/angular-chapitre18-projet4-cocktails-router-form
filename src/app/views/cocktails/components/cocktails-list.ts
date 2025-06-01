@@ -25,8 +25,7 @@ import { Cocktail } from 'app/shared/interfaces';
     />
     <ul class="mb-20">
       @let likedIds = likedCocktailIds(); @for (cocktail of filteredCocktails();
-      track cocktail.name) { @let active = cocktail._id ===
-      selectedCocktailId();
+      track cocktail._id) { @let active = cocktail._id === selectedCocktailId();
       <li
         [class.active-item]="active"
         [class.text-primary]="active"
