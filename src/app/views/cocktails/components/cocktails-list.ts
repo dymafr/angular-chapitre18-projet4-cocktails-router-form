@@ -48,7 +48,7 @@ import { Cocktail } from 'app/shared/interfaces';
     '(window:keydown)': 'keyboardInteraction($event)',
   },
 })
-export class CocktailsListComponent {
+export class CocktailsList {
   search = viewChild<ElementRef<HTMLInputElement>>('search');
   filter = signal('');
   cocktails = input<Cocktail[]>();

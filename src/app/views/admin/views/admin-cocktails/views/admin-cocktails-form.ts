@@ -16,7 +16,7 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Cocktail, CocktailForm } from 'app/shared/interfaces';
-import { CocktailsService } from 'app/shared/services/cocktails.service';
+import { CocktailsDataClient } from 'app/shared/services/cocktails.data-client';
 
 @Component({
   selector: 'app-admin-cocktails-form',
@@ -83,9 +83,9 @@ import { CocktailsService } from 'app/shared/services/cocktails.service';
   host: { class: 'card' },
   styles: ` .card { padding: 8px; }`,
 })
-export class AdminCocktailsFormComponent {
+export class AdminCocktailsForm {
   private fb = inject(FormBuilder);
-  private cocktailService = inject(CocktailsService);
+  private cocktailService = inject(CocktailsDataClient);
   private activatedRoute = inject(ActivatedRoute);
   private router = inject(Router);
   cocktails = computed(() => this.cocktailService.cocktailsResource.value());

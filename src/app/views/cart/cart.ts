@@ -1,17 +1,17 @@
 import { Component, computed, inject } from '@angular/core';
-import { CartIngredientsListComponent } from './components/cart-ingredients-list.component';
-import { CartService } from 'app/shared/services/cart.service';
+import { CartIngredientsList } from './components/cart-ingredients-list';
+import { CartDataClient } from 'app/shared/services/cart.data-client';
 
 @Component({
   selector: 'app-cart',
-  imports: [CartIngredientsListComponent],
+  imports: [CartIngredientsList],
   template: `<app-cart-ingredients-list
     class="card"
     [ingredients]="ingredients()"
   /> `,
   styles: `:host { flex: 1 1 auto; padding: 24px; }`,
 })
-export class CartComponent {
-  private cartService = inject(CartService);
+export class Cart {
+  private cartService = inject(CartDataClient);
   ingredients = computed(() => this.cartService.ingredients());
 }

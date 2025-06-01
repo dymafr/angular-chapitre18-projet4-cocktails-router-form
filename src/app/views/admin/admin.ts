@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { AdminNavbarComponent } from './components/admin-navbar.component';
+import { AdminNavbar } from './components/admin-navbar';
 import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-admin',
-  imports: [AdminNavbarComponent, RouterOutlet],
+  imports: [AdminNavbar, RouterOutlet],
   template: `
     <app-admin-navbar />
     <div class="flex-auto">
@@ -21,4 +21,4 @@ import { RouterOutlet } from '@angular/router';
     } 
   }`,
 })
-export class AdminComponent {}
+export class Admin {}

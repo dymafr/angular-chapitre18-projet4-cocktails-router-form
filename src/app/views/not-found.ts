@@ -6,4 +6,4 @@ import { Component } from '@angular/core';
   template: `<h3>Page introuvable</h3>`,
   styles: `:host { flex: 1 1 auto; display: flex; justify-content: center; align-items: center }`,
 })
-export class NotFoundComponent {}
+export class NotFound {}

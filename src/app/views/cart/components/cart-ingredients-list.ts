@@ -17,7 +17,7 @@ import { Component, computed, input } from '@angular/core';
   `,
   styles: `:host { display: block; }`,
 })
-export class CartIngredientsListComponent {
+export class CartIngredientsList {
   ingredients = input<string[]>([]);
   ingredientDisplays = computed(() =>
     Object.entries(

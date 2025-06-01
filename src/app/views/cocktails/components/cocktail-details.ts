@@ -54,7 +54,7 @@ import { Cocktail } from 'app/shared/interfaces';
     }
   `,
 })
-export class CocktailDetailsComponent {
+export class CocktailDetails {
   cocktail = input.required<Cocktail>();
   isLiked = input.required<boolean>();
   likecocktail = output<string>();

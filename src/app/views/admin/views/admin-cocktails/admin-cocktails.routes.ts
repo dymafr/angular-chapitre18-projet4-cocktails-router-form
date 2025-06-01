@@ -1,24 +1,24 @@
 import { Routes } from '@angular/router';
-import { AdminCocktailsComponent } from './admin-cocktails.component';
-import { AdminCocktailsListComponent } from './views/admin-cocktails-list.component';
-import { AdminCocktailsFormComponent } from './views/admin-cocktails-form.component';
+import { AdminCocktails } from './admin-cocktails';
+import { AdminCocktailsList } from './views/admin-cocktails-list';
+import { AdminCocktailsForm } from './views/admin-cocktails-form';
 
 export const routes: Routes = [
   {
     path: '',
-    component: AdminCocktailsComponent,
+    component: AdminCocktails,
     children: [
       {
         path: 'list',
-        component: AdminCocktailsListComponent,
+        component: AdminCocktailsList,
       },
       {
         path: 'new',
-        component: AdminCocktailsFormComponent,
+        component: AdminCocktailsForm,
       },
       {
         path: ':cocktailId/edit',
-        component: AdminCocktailsFormComponent,
+        component: AdminCocktailsForm,
       },
       {
         path: '',

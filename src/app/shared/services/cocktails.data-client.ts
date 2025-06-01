@@ -6,7 +6,7 @@ const BASE_URL = 'https://restapi.fr/api/acocktails';
 @Injectable({
   providedIn: 'root',
 })
-export class CocktailsService {
+export class CocktailsDataClient {
   cocktailsResource = resource({
     loader: async (): Promise<Cocktail[]> => (await fetch(BASE_URL)).json(),
   });

@@ -1,16 +1,16 @@
 import { Routes } from '@angular/router';
-import { AdminComponent } from './admin.component';
-import { AdminUsersComponent } from './views/admin-users/admin-users.component';
-import { AdminCocktailsComponent } from './views/admin-cocktails/admin-cocktails.component';
+import { Admin } from './admin';
+import { AdminUsers } from './views/admin-users/admin-users';
+import { AdminCocktails } from './views/admin-cocktails/admin-cocktails';
 
 export const routes: Routes = [
   {
     path: '',
-    component: AdminComponent,
+    component: Admin,
     children: [
       {
         path: 'users',
-        component: AdminUsersComponent,
+        component: AdminUsers,
       },
       {
         path: 'cocktails',

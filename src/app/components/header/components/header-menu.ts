@@ -38,7 +38,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
     }
   `,
 })
-export class HeaderMenuComponent {
+export class HeaderMenu {
   show = signal(false);
   navigations = [
     {

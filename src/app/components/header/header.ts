@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { HeaderMenuComponent } from './components/header-menu.component';
+import { HeaderMenu } from './components/header-menu';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-header',
-  imports: [HeaderMenuComponent, RouterLink, RouterLinkActive],
+  imports: [HeaderMenu, RouterLink, RouterLinkActive],
   template: `
     <div class="flex-auto text-bold text-lg">Cocktails</div>
     <ul class="xs-hide flex flex-row gap-16">
@@ -32,4 +32,4 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
     }
   `,
 })
-export class HeaderComponent {}
+export class Header {}

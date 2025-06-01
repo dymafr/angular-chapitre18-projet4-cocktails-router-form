@@ -1,16 +1,16 @@
 import { Routes } from '@angular/router';
-import { CocktailsComponent } from './views/cocktails/cocktails.component';
-import { NotFoundComponent } from './views/not-found.component';
+import { Cocktails } from './views/cocktails/cocktails';
+import { NotFound } from './views/not-found';
 
 export const routes: Routes = [
   {
     path: 'cocktails',
-    component: CocktailsComponent,
+    component: Cocktails,
   },
   {
     path: 'cart',
     loadComponent: async () =>
-      (await import('./views/cart/cart.component')).CartComponent,
+      (await import('./views/cart/cart')).Cart,
   },
   {
     path: 'admin',
@@ -24,6 +24,6 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    component: NotFoundComponent,
+    component: NotFound,
   },
 ];

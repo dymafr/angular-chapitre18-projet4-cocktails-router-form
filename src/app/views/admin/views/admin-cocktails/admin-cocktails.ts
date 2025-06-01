@@ -13,4 +13,4 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
   `,
   styles: `:host { display: flex; flex-direction: column }`,
 })
-export class AdminCocktailsComponent {}
+export class AdminCocktails {}
