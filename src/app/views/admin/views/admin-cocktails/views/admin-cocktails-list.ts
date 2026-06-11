@@ -1,6 +1,5 @@
 import { Component, computed, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { CocktailsDataClient } from 'app/shared/services/cocktails.data-client';
+import { CocktailsService } from 'app/shared/services/cocktails-service';
 
 @Component({
   selector: 'app-admin-cocktails-list',
@@ -28,7 +27,7 @@ import { CocktailsDataClient } from 'app/shared/services/cocktails.data-client';
   `,
 })
 export class AdminCocktailsList {
-  cocktailsService = inject(CocktailsDataClient);
+  cocktailsService = inject(CocktailsService);
   cocktails = computed(
     () => this.cocktailsService.cocktailsResource.value() || [],
   );

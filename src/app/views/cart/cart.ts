@@ -1,6 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { CartIngredientsList } from './components/cart-ingredients-list';
-import { CartDataClient } from 'app/shared/services/cart.data-client';
+import { CartService } from 'app/shared/services/cart-service';
 
 @Component({
   selector: 'app-cart',
@@ -9,9 +9,14 @@ import { CartDataClient } from 'app/shared/services/cart.data-client';
     class="card"
     [ingredients]="ingredients()"
   /> `,
-  styles: `:host { flex: 1 1 auto; padding: 24px; }`,
+  styles: `
+    :host {
+      flex: 1 1 auto;
+      padding: 24px;
+    }
+  `,
 })
 export class Cart {
-  private cartService = inject(CartDataClient);
+  private cartService = inject(CartService);
   ingredients = computed(() => this.cartService.ingredients());
 }

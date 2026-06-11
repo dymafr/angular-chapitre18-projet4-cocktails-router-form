@@ -3,7 +3,7 @@ import { computed, Injectable, signal } from '@angular/core';
 @Injectable({
   providedIn: 'root',
 })
-export class CartDataClient {
+export class CartService {
   likedCocktailIds = signal<string[]>([]);
   ingredients = signal<string[]>([]);
 
@@ -15,7 +15,7 @@ export class CartDataClient {
   }
   unlikeCocktail(cocktailId: string) {
     this.likedCocktailIds.update((likedCocktails) =>
-      likedCocktails.filter((id) => id !== cocktailId)
+      likedCocktails.filter((id) => id !== cocktailId),
     );
   }
   addIngredients(ingredients: string[]) {

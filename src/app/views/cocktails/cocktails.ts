@@ -1,8 +1,8 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { CocktailsList } from './components/cocktails-list';
 import { CocktailDetails } from './components/cocktail-details';
-import { CocktailsDataClient } from 'app/shared/services/cocktails.data-client';
-import { CartDataClient } from 'app/shared/services/cart.data-client';
+import { CocktailsService } from 'app/shared/services/cocktails-service';
+import { CartService } from 'app/shared/services/cart-service';
 
 @Component({
   selector: 'app-cocktails',
@@ -16,22 +16,23 @@ import { CartDataClient } from 'app/shared/services/cart.data-client';
       [cocktails]="cocktails()"
       class="w-half xs-w-full card"
     />
-    @let sc = selectedCocktail(); @if (sc) {
-    <app-cocktail-details
-      (likecocktail)="likeCocktail($event)"
-      (unlikecocktail)="unlikeCocktail($event)"
-      (addIngredients)="addIngredients($event)"
-      [cocktail]="sc"
-      [isLiked]="selectedCocktailLiked()"
-      class="w-half xs-w-full card"
-    />
+    @let sc = selectedCocktail();
+    @if (sc) {
+      <app-cocktail-details
+        (likecocktail)="likeCocktail($event)"
+        (unlikecocktail)="unlikeCocktail($event)"
+        (addIngredients)="addIngredients($event)"
+        [cocktail]="sc"
+        [isLiked]="selectedCocktailLiked()"
+        class="w-half xs-w-full card"
+      />
     }
   `,
   styles: `
     :host {
       flex: 1 1 auto;
       display: flex;
-      gap:24px;
+      gap: 24px;
       padding: 24px;
       @media screen and (max-width: 820px) {
         flex-direction: column;
@@ -40,16 +41,16 @@ import { CartDataClient } from 'app/shared/services/cart.data-client';
   `,
 })
 export class Cocktails {
-  private cocktailsService = inject(CocktailsDataClient);
-  private cartService = inject(CartDataClient);
+  private cocktailsService = inject(CocktailsService);
+  private cartService = inject(CartService);
 
   cocktails = computed(
-    () => this.cocktailsService.cocktailsResource.value() || []
+    () => this.cocktailsService.cocktailsResource.value() || [],
   );
 
   selectedCocktailId = signal<string | null>(null);
   selectedCocktail = computed(() =>
-    this.cocktails().find(({ _id }) => _id === this.selectedCocktailId())
+    this.cocktails().find(({ _id }) => _id === this.selectedCocktailId()),
   );
   selectedCocktailLiked = computed(() => {
     const selectedCocktailId = this.selectedCocktailId();
