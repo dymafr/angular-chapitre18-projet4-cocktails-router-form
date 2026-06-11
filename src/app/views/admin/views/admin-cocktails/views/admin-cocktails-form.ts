@@ -1,4 +1,5 @@
-import { Component, inject, signal } from '@angular/core';
+import { httpResource } from '@angular/common/http';
+import { Component, inject, input, linkedSignal, signal } from '@angular/core';
 import {
   form,
   required,
@@ -8,8 +9,11 @@ import {
   applyEach,
 } from '@angular/forms/signals';
 import { Router } from '@angular/router';
-import { CocktailForm } from 'app/shared/interfaces';
-import { CocktailsService } from 'app/shared/services/cocktails-service';
+import { Cocktail, CocktailForm } from 'app/shared/interfaces';
+import {
+  BASE_URL,
+  CocktailsService,
+} from 'app/shared/services/cocktails-service';
 
 @Component({
   selector: 'app-admin-cocktails-form',
@@ -20,7 +24,11 @@ import { CocktailsService } from 'app/shared/services/cocktails-service';
     }
   `,
   template: `
-    <h3 class="mb-20">Création d'un cocktail</h3>
+    @if (cocktailId()) {
+      <h3 class="mb-20">Édition d'un cocktail</h3>
+    } @else {
+      <h3 class="mb-20">Création d'un cocktail</h3>
+    }
     <form [formRoot]="cocktailForm">
       <div class="flex flex-col gap-12 mb-10">
         <label for="name">Nom</label>
@@ -104,12 +112,35 @@ import { CocktailsService } from 'app/shared/services/cocktails-service';
 export class AdminCocktailsForm {
   private cocktailService = inject(CocktailsService);
   private router = inject(Router);
+  cocktailId = input<string | null>();
+  cocktailResource = httpResource<Cocktail | undefined>(() => {
+    const id = this.cocktailId();
+    return id ? `${BASE_URL}/${id}` : undefined;
+  });
 
-  cocktailModel = signal<CocktailForm>({
-    name: '',
-    description: '',
-    imageUrl: '',
-    ingredients: [],
+  cocktailModel = linkedSignal<Cocktail | undefined, CocktailForm>({
+    source: () => {
+      return this.cocktailResource.hasValue()
+        ? this.cocktailResource.value()
+        : undefined;
+    },
+    computation: (cocktail) => {
+      if (cocktail) {
+        return {
+          name: cocktail.name,
+          description: cocktail.description,
+          imageUrl: cocktail.imageUrl,
+          ingredients: [...cocktail.ingredients],
+        };
+      } else {
+        return {
+          name: '',
+          description: '',
+          imageUrl: '',
+          ingredients: [],
+        };
+      }
+    },
   });
 
   cocktailForm = form(
@@ -134,7 +165,15 @@ export class AdminCocktailsForm {
       submission: {
         action: async (field) => {
           const cocktailFormValue = field().value();
-          await this.cocktailService.createCocktail(cocktailFormValue);
+          const cocktailId = this.cocktailId();
+          if (cocktailId) {
+            await this.cocktailService.editCocktail(
+              cocktailId,
+              cocktailFormValue,
+            );
+          } else {
+            await this.cocktailService.createCocktail(cocktailFormValue);
+          }
           this.router.navigateByUrl('/admin/cocktails/list');
         },
         onInvalid() {},
