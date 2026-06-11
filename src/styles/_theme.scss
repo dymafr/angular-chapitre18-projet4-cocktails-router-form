@@ -68,11 +68,11 @@ textarea {
 }
 
 .error {
-  color: var(--danger);
   font-size: 12px;
   font-weight: 500;
+  color: var(--danger);
 }
 
-button[disabled] {
+.disabled {
   opacity: 0.5;
 }

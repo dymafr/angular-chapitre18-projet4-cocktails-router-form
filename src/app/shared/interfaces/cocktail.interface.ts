@@ -7,7 +7,6 @@ export interface Cocktail {
 }
 
 export interface CocktailForm {
-  _id?: string;
   imageUrl: string;
   name: string;
   description: string;

@@ -1,159 +1,153 @@
+import { Component, signal } from '@angular/core';
 import {
-  Component,
-  computed,
-  effect,
-  inject,
-  input,
-  signal,
-} from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import {
-  FormArray,
-  FormBuilder,
-  FormControl,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Cocktail, CocktailForm } from 'app/shared/interfaces';
-import { CocktailsDataClient } from 'app/shared/services/cocktails.data-client';
+  form,
+  required,
+  schema,
+  FormRoot,
+  FormField,
+  applyEach,
+} from '@angular/forms/signals';
+import { CocktailForm } from 'app/shared/interfaces';
 
 @Component({
   selector: 'app-admin-cocktails-form',
-  imports: [ReactiveFormsModule],
-  template: `
-    @if (this.cocktailId) {
-    <h3 class="mb-20">Modification d'un cocktail</h3>
-    } @else {
-    <h3 class="mb-20">Création d'un cocktail</h3>
+  host: { class: 'card' },
+  styles: `
+    .card {
+      padding: 8px;
     }
-    <form [formGroup]="cocktailForm" (submit)="submit()">
+  `,
+  template: `
+    <h3 class="mb-20">Création d'un cocktail</h3>
+    <form [formRoot]="cocktailForm">
       <div class="flex flex-col gap-12 mb-10">
-        <label for="name">Nom du cocktail</label>
-        <input formControlName="name" id="name" type="text" />
-        @if (nameControl.errors?.['required'] && (nameControl.touched ||
-        cocktailForm.dirty)) {
-        <p class="error">Le nom du cocktail est obligatoire</p>
+        <label for="name">Nom</label>
+        <input type="text" id="name" [formField]="cocktailForm.name" />
+        @let name = cocktailForm.name();
+        @if (name.touched()) {
+          @for (error of name.errors(); track error) {
+            <p class="error">{{ error.message }}</p>
+          }
         }
       </div>
       <div class="flex flex-col gap-12 mb-10">
-        <label for="imageUrl">Url de l'image</label>
-        <input formControlName="imageUrl" id="imageUrl" type="text" />
+        <label for="description">Description</label>
+        <textarea
+          type="text"
+          id="description"
+          rows="3"
+          [formField]="cocktailForm.description"
+        ></textarea>
+        @let description = cocktailForm.description();
+        @if (description.touched()) {
+          @for (error of description.errors(); track error) {
+            <p class="error">{{ error.message }}</p>
+          }
+        }
       </div>
       <div class="flex flex-col gap-12 mb-10">
-        <label for="description">Description du cocktail</label>
-        <textarea
-          formControlName="description"
-          id="description"
-          cols="3"
-        ></textarea>
+        <label for="imageUrl">Url</label>
+        <input type="text" id="imageUrl" [formField]="cocktailForm.imageUrl" />
+        @let imageUrl = cocktailForm.imageUrl();
+        @if (imageUrl.touched()) {
+          @for (error of imageUrl.errors(); track error) {
+            <p class="error">{{ error.message }}</p>
+          }
+        }
       </div>
-      <div class="mb-20">
-        <div class="flex align-items-center gap-12 mb-10">
+      <div class="flex flex-col gap-12 mb-10">
+        <div class="flex align-items-center mb-20">
           <label class="flex-auto">Ingredients</label>
           <button
+            class="btn btn-primary"
             type="button"
             (click)="addIngredient()"
-            class="btn btn-primary"
           >
             Ajouter
           </button>
         </div>
-        <ul formArrayName="ingredients">
-          @for(ingredient of ingredientsControl.controls; track $index) {
-          <li class="flex align-items-center gap-12 mb-10">
-            <input class="flex-auto" [formControlName]="$index" type="text" />
-            <button (click)="deleteIngredient($index)" class="btn btn-danger">
-              Supprimer
-            </button>
-          </li>
+        <ul class="mb-20 flex flex-col gap-12">
+          @for (ingredient of cocktailForm.ingredients; track $index) {
+            <li class="flex align-items-center gap-12">
+              <input type="text" class="flex-auto" [formField]="ingredient" />
+              <button
+                class="btn btn-danger"
+                type="button"
+                (click)="deleteIngredient($index)"
+              >
+                Supprimer
+              </button>
+            </li>
+            @if (ingredient().touched()) {
+              @for (error of ingredient().errors(); track error) {
+                <p class="error">{{ error.message }}</p>
+              }
+            }
           }
         </ul>
       </div>
-      <div>
-        <button
-          [disabled]="cocktailForm.invalid || this.isLoading()"
-          class="btn btn-primary"
-        >
-          Sauvegarder
-        </button>
-      </div>
+      <button
+        [class.disabled]="cocktailForm().invalid()"
+        class="btn btn-primary"
+      >
+        Sauvegarder
+      </button>
     </form>
   `,
-  host: { class: 'card' },
-  styles: ` .card { padding: 8px; }`,
+  imports: [FormRoot, FormField],
 })
 export class AdminCocktailsForm {
-  private fb = inject(FormBuilder);
-  private cocktailService = inject(CocktailsDataClient);
-  private activatedRoute = inject(ActivatedRoute);
-  private router = inject(Router);
-  cocktails = computed(() => this.cocktailService.cocktailsResource.value());
-  cocktailId = toSignal(this.activatedRoute.params)()!['cocktailId'];
-  isLoading = signal(false);
-
-  cocktailForm = this.fb.group({
-    name: ['', Validators.required],
-    imageUrl: [''],
-    description: [''],
-    ingredients: this.fb.array([]),
+  cocktailModel = signal<CocktailForm>({
+    name: '',
+    description: '',
+    imageUrl: '',
+    ingredients: [],
   });
 
-  initCocktailFormEffect = effect(() => {
-    if (this.cocktailId) {
-      const cocktails = this.cocktails();
-      if (cocktails) {
-        const { name, imageUrl, description, ingredients } = cocktails.find(
-          ({ _id }) => this.cocktailId === _id
-        )!;
-        this.cocktailForm.patchValue({
-          name,
-          imageUrl,
-          description,
+  cocktailForm = form(
+    this.cocktailModel,
+    (schemaPath) => {
+      required(schemaPath.name, {
+        message: 'Le nom du cocktail est obligatoire',
+      });
+      required(schemaPath.description, {
+        message: 'La description du cocktail est obligatoire',
+      });
+      required(schemaPath.imageUrl, {
+        message: "L'url de l'image du cocktail est obligatoire",
+      });
+      applyEach(schemaPath.ingredients, (schemaPathIngredient) => {
+        required(schemaPathIngredient, {
+          message: "Le nom de l'ingredient est obligatoire",
         });
-        ingredients.forEach((i) =>
-          this.ingredientsControl.push(this.fb.control(i))
-        );
-        this.initCocktailFormEffect.destroy();
-      }
-    } else {
-      this.initCocktailFormEffect.destroy();
-    }
-  });
+      });
+    },
+    {
+      submission: {
+        action: async (field) => {
+          console.log('submit !');
+        },
+        onInvalid() {
+          return {
+            kind: 'ServerOffline',
+            message: 'Un problème est survenu',
+          };
+        },
+      },
+    },
+  );
 
-  get ingredientsControl() {
-    return this.cocktailForm.get('ingredients') as FormArray;
-  }
-
-  get nameControl() {
-    return this.cocktailForm.get('name') as FormControl;
+  addIngredient() {
+    this.cocktailForm
+      .ingredients()
+      .value.update((ingredients) => [...ingredients, '']);
   }
 
   deleteIngredient(index: number) {
-    this.ingredientsControl.removeAt(index);
-  }
-
-  addIngredient() {
-    this.ingredientsControl.push(this.fb.control(''));
-  }
-
-  async submit() {
-    this.isLoading.set(true);
-    try {
-      if (this.cocktailId) {
-        await this.cocktailService.editCocktail({
-          ...this.cocktailForm.getRawValue(),
-          _id: this.cocktailId,
-        } as Cocktail);
-      } else {
-        await this.cocktailService.createCocktail(
-          this.cocktailForm.getRawValue() as CocktailForm
-        );
-      }
-      this.router.navigateByUrl('/admin/cocktails/list');
-    } catch (e) {
-    } finally {
-      this.isLoading.set(false);
-    }
+    this.cocktailForm
+      .ingredients()
+      .value.update((ingredients) =>
+        ingredients.filter((_, Iindex) => Iindex !== index),
+      );
   }
 }
