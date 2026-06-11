@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import {
   form,
   required,
@@ -7,7 +7,9 @@ import {
   FormField,
   applyEach,
 } from '@angular/forms/signals';
+import { Router } from '@angular/router';
 import { CocktailForm } from 'app/shared/interfaces';
+import { CocktailsService } from 'app/shared/services/cocktails-service';
 
 @Component({
   selector: 'app-admin-cocktails-form',
@@ -87,7 +89,10 @@ import { CocktailForm } from 'app/shared/interfaces';
         </ul>
       </div>
       <button
-        [class.disabled]="cocktailForm().invalid()"
+        [disabled]="cocktailForm().submitting()"
+        [class.disabled]="
+          cocktailForm().invalid() || cocktailForm().submitting()
+        "
         class="btn btn-primary"
       >
         Sauvegarder
@@ -97,6 +102,9 @@ import { CocktailForm } from 'app/shared/interfaces';
   imports: [FormRoot, FormField],
 })
 export class AdminCocktailsForm {
+  private cocktailService = inject(CocktailsService);
+  private router = inject(Router);
+
   cocktailModel = signal<CocktailForm>({
     name: '',
     description: '',
@@ -125,14 +133,11 @@ export class AdminCocktailsForm {
     {
       submission: {
         action: async (field) => {
-          console.log('submit !');
+          const cocktailFormValue = field().value();
+          await this.cocktailService.createCocktail(cocktailFormValue);
+          this.router.navigateByUrl('/admin/cocktails/list');
         },
-        onInvalid() {
-          return {
-            kind: 'ServerOffline',
-            message: 'Un problème est survenu',
-          };
-        },
+        onInvalid() {},
       },
     },
   );
