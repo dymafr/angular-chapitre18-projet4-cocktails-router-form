@@ -1,8 +1,8 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { CocktailsList } from './components/cocktails-list';
 import { CocktailDetails } from './components/cocktail-details';
-import { CocktailsService } from 'app/shared/services/cocktails-service';
-import { CartService } from 'app/shared/services/cart-service';
+import { CocktailsService } from 'app/shared/services/cocktails.service';
+import { CartService } from 'app/shared/services/cart.service';
 
 @Component({
   selector: 'app-cocktails',

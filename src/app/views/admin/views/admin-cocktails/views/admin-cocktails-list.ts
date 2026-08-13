@@ -1,5 +1,5 @@
 import { Component, computed, inject } from '@angular/core';
-import { CocktailsService } from 'app/shared/services/cocktails-service';
+import { CocktailsService } from 'app/shared/services/cocktails.service';
 import { RouterLink } from '@angular/router';
 
 @Component({

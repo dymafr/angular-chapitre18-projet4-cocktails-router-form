@@ -13,7 +13,7 @@ import { Cocktail, CocktailForm } from 'app/shared/interfaces';
 import {
   BASE_URL,
   CocktailsService,
-} from 'app/shared/services/cocktails-service';
+} from 'app/shared/services/cocktails.service';
 
 @Component({
   selector: 'app-admin-cocktails-form',

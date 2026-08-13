@@ -1,7 +1,7 @@
 import { httpResource } from '@angular/common/http';
 import { Component, input, output } from '@angular/core';
 import { Cocktail } from 'app/shared/interfaces';
-import { BASE_URL } from 'app/shared/services/cocktails-service';
+import { BASE_URL } from 'app/shared/services/cocktails.service';
 
 @Component({
   selector: 'app-cocktail-details',
